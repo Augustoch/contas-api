@@ -40,7 +40,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 		http.cors().and().authorizeRequests()
 		.antMatchers(HttpMethod.POST, "/auth").permitAll()
 		.antMatchers(HttpMethod.GET, "/login/**").permitAll()
-		.antMatchers("/static/**").anonymous()
+		.antMatchers(HttpMethod.GET, "/").permitAll()
 		.anyRequest().authenticated()
 		.and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenLocalService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
