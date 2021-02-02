@@ -1,7 +1,10 @@
 package com.augusto.model.dto;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
+import com.augusto.model.Arquivo;
 import com.augusto.model.enums.SituacaoConta;
 
 import lombok.AllArgsConstructor;
@@ -23,15 +26,42 @@ public class ListagemDeContaDTO {
 	private String nomeBoleto;
 	private Long idComprovante;
 	private String nomeComprovante;
+	
+	private String contaDeSaida;
+	
+	private boolean estaVencida;
+	private boolean venceHoje;
 
 	public ListagemDeContaDTO(Long idConta, String descricaoConta, Date vencimento, String comentarios,
-			SituacaoConta situacaoConta, String comentarioDePagamento) {
+			SituacaoConta situacaoConta, String comentarioDePagamento, String contaDeSaida) {
 		this.idConta = idConta;
 		this.descricaoConta = descricaoConta;
 		this.vencimento = vencimento;
 		this.comentarios = comentarios;
 		this.situacaoConta = situacaoConta;
 		this.comentarioDePagamento = comentarioDePagamento;
+		this.contaDeSaida = contaDeSaida;
+		
+		verificaVencimento();
+		
+	}
 
+	private void verificaVencimento() {
+		LocalDate hoje = LocalDate.now();
+		LocalDate vencimentoLocalDate = this.vencimento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		
+		this.estaVencida = vencimentoLocalDate.isBefore(hoje);
+		this.venceHoje = vencimentoLocalDate.isEqual(hoje);
+	}
+	
+	public void definirArquivos(Arquivo arquivo) {
+		if (arquivo.eBoleto()) {
+			this.idBoleto = arquivo.getId();
+			this.nomeBoleto =  arquivo.getNome();
+		}
+		if (arquivo.eComprovante()) {
+			this.idComprovante = arquivo.getId();
+			this.nomeComprovante = arquivo.getNome();
+		}
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.augusto.business.ContaPagarBusiness;
 import com.augusto.model.dto.ContaDTO;
 import com.augusto.model.dto.ListagemDeContaDTO;
+import com.augusto.model.dto.PesquisaContaDTO;
 import com.augusto.model.dto.SalvarPagamentoDTO;
 
 @RestController
@@ -29,8 +31,8 @@ public class ContaController {
 	}
 
 	@GetMapping
-	public Collection<ListagemDeContaDTO> obterContas(ContaDTO contaDTO) {
-		return this.contaPagarBusiness.obterContas(contaDTO);
+	public Collection<ListagemDeContaDTO> obterContas(PesquisaContaDTO pesquisaContaDTO) {
+		return this.contaPagarBusiness.obterContas(pesquisaContaDTO);
 	}
 
 	@DeleteMapping("{idConta}")
@@ -39,7 +41,8 @@ public class ContaController {
 	}
 
 	@PutMapping
-	public void salvarPagamento(SalvarPagamentoDTO salvarPagamentoDTO) throws IOException {
+	public void /*ResponseEntity<?>*/ salvarPagamento(SalvarPagamentoDTO salvarPagamentoDTO) throws IOException {
 		this.contaPagarBusiness.salvarContaPagamento(salvarPagamentoDTO);
+		//return ResponseEntity.ok().build();
 	}
 }

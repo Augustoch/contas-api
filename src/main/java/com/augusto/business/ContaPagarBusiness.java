@@ -11,16 +11,21 @@ import com.augusto.model.Arquivo;
 import com.augusto.model.ContaPagar;
 import com.augusto.model.dto.ContaDTO;
 import com.augusto.model.dto.ListagemDeContaDTO;
+import com.augusto.model.dto.PesquisaContaDTO;
 import com.augusto.model.dto.SalvarPagamentoDTO;
 import com.augusto.model.enums.SituacaoConta;
 import com.augusto.model.enums.TipoArquivo;
 import com.augusto.repository.ContaRepository;
+import com.augusto.repository.ContaRepositoryImpl;
 
 @Component
 public class ContaPagarBusiness {
 
 	@Autowired
 	private ContaRepository contaRepository;
+	
+	@Autowired
+	private ContaRepositoryImpl repositoryImpl;
 
 	@Autowired
 	private ArquivoBusiness arquivoBusiness;
@@ -35,19 +40,15 @@ public class ContaPagarBusiness {
 		});
 	}
 
-	public Collection<ListagemDeContaDTO> obterContas(ContaDTO contaDTO) {
-		Collection<ListagemDeContaDTO> contas = this.contaRepository.obterContas(contaDTO);
+	public Collection<ListagemDeContaDTO> obterContas(PesquisaContaDTO pesquisaContaDTO) {
+		pesquisaContaDTO.descricaoCheckNonNull();
+		pesquisaContaDTO.converterDateStringsToDate();
+		pesquisaContaDTO.converterSituacaoParaEnumSituacao();
+		Collection<ListagemDeContaDTO> contas = this.contaRepository.obterContas(pesquisaContaDTO);
 
 		for (ListagemDeContaDTO listagemDeContaDTO : contas) {
 			for (Arquivo arquivo : this.arquivoBusiness.getArquivos(listagemDeContaDTO.getIdConta())) {
-				if (arquivo.eBoleto()) {
-					listagemDeContaDTO.setIdBoleto(arquivo.getId());
-					listagemDeContaDTO.setNomeBoleto(arquivo.getNome());
-				}
-				if (arquivo.eComprovante()) {
-					listagemDeContaDTO.setIdComprovante(arquivo.getId());
-					listagemDeContaDTO.setNomeComprovante(arquivo.getNome());
-				}
+					listagemDeContaDTO.definirArquivos(arquivo);
 			}
 		}
 
