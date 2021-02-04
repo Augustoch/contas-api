@@ -59,11 +59,8 @@ public class ContaPagarBusiness {
 	@Transactional(rollbackFor = Exception.class)
 	public void salvarContaPagamento(SalvarPagamentoDTO salvarPagamentoDTO) throws IOException {
 		this.arquivoBusiness.salvar(salvarPagamentoDTO.obterArquivoComprovante());
-//		this.contaRepository.atualizarContaPagar(SituacaoConta.PAGO,
-//				salvarPagamentoDTO.getIdContaSaida(), salvarPagamentoDTO.getComentarioDePagamento(), salvarPagamentoDTO.getIdContaPagar());
 		salvarPagamentoDTO.setSituacaoConta(SituacaoConta.PAGO);
 		this.contaRepository.atualizarContaPagar(salvarPagamentoDTO);
-//				salvarPagamentoDTO.getIdContaSaida(), salvarPagamentoDTO.getComentarioDePagamento(), salvarPagamentoDTO.getIdContaPagar());
 	}
 
 

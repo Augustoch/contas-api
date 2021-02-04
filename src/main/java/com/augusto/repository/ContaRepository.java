@@ -32,11 +32,6 @@ public interface ContaRepository extends JpaRepository<ContaPagar, Long> {
 			+ " AND   (cp.contaDeSaida.id = :#{#pesquisaContaDTO.idContaSaida} OR  :#{#pesquisaContaDTO.idContaSaida} IS NULL) "
 			+ " ORDER BY cp.vencimento ")
 	List<ListagemDeContaDTO> obterContas(@Param("pesquisaContaDTO") PesquisaContaDTO pesquisaContaDTO);
-//
-//	@Transactional
-//	@Modifying
-//	@Query(" UPDATE ContaPagar SET situacaoConta = ?1, contaDeSaida.id = ?2, comentarioDePagamento = ?3 where id = ?4 ")
-//	void atualizarContaPagar(SituacaoConta pago, Long idContaSaida, String comentarioDePagamento, Long ContaPagar);
 
 	@Transactional
 	@Modifying
