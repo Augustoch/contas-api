@@ -9,14 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.augusto.model.Arquivo;
 import com.augusto.model.ContaPagar;
-import com.augusto.model.dto.ContaDTO;
 import com.augusto.model.dto.ListagemDeContaDTO;
 import com.augusto.model.dto.PesquisaContaDTO;
 import com.augusto.model.dto.SalvarPagamentoDTO;
 import com.augusto.model.enums.SituacaoConta;
-import com.augusto.model.enums.TipoArquivo;
 import com.augusto.repository.ContaRepository;
-import com.augusto.repository.ContaRepositoryImpl;
 
 @Component
 public class ContaPagarBusiness {
@@ -24,8 +21,6 @@ public class ContaPagarBusiness {
 	@Autowired
 	private ContaRepository contaRepository;
 	
-	@Autowired
-	private ContaRepositoryImpl repositoryImpl;
 
 	@Autowired
 	private ArquivoBusiness arquivoBusiness;
@@ -55,16 +50,21 @@ public class ContaPagarBusiness {
 		return contas;
 	}
 
-	public void deletar(Long idConta) {
-		this.contaRepository.deleteById(idConta);
+	public Long deletar(Long idConta) {
+		 this.contaRepository.deleteById(idConta);
+		 return idConta;
 
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public void salvarContaPagamento(SalvarPagamentoDTO salvarPagamentoDTO) throws IOException {
 		this.arquivoBusiness.salvar(salvarPagamentoDTO.obterArquivoComprovante());
-		this.contaRepository.atualizarContaPagar(SituacaoConta.PAGO,
-				salvarPagamentoDTO.getIdContaSaida(), salvarPagamentoDTO.getComentarioDePagamento(), salvarPagamentoDTO.getIdContaPagar());
+//		this.contaRepository.atualizarContaPagar(SituacaoConta.PAGO,
+//				salvarPagamentoDTO.getIdContaSaida(), salvarPagamentoDTO.getComentarioDePagamento(), salvarPagamentoDTO.getIdContaPagar());
+		salvarPagamentoDTO.setSituacaoConta(SituacaoConta.PAGO);
+		this.contaRepository.atualizarContaPagar(salvarPagamentoDTO);
+//				salvarPagamentoDTO.getIdContaSaida(), salvarPagamentoDTO.getComentarioDePagamento(), salvarPagamentoDTO.getIdContaPagar());
 	}
+
 
 }

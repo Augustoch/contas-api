@@ -7,13 +7,16 @@ import java.util.Date;
 import com.augusto.model.Arquivo;
 import com.augusto.model.enums.SituacaoConta;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class ListagemDeContaDTO {
 	private Long idConta;
 	private String descricaoConta;

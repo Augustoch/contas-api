@@ -1,5 +1,10 @@
 package com.augusto.model;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.augusto.model.enums.TipoArquivo;
 
@@ -57,4 +65,5 @@ public class Arquivo {
 	public boolean eComprovante(){
 		return this.tipoArquivo == TipoArquivo.COMPROVANTE;
 	}
+	
 }

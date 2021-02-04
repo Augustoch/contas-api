@@ -1,7 +1,9 @@
 package com.augusto.repository;
 
 import java.util.Collection;
+import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,11 +15,12 @@ import com.augusto.model.ContaPagar;
 import com.augusto.model.dto.ContaDTO;
 import com.augusto.model.dto.ListagemDeContaDTO;
 import com.augusto.model.dto.PesquisaContaDTO;
+import com.augusto.model.dto.SalvarPagamentoDTO;
 import com.augusto.model.enums.SituacaoConta;
 
 @Repository
 public interface ContaRepository extends JpaRepository<ContaPagar, Long> {
-	
+
 	@Query("SELECT new com.augusto.model.dto.ListagemDeContaDTO(cp.id, cp.descricao, cp.vencimento, cp.comentarios,"
 			+ " cp.situacaoConta, cp.comentarioDePagamento, cs.descricao) "
 			+ " FROM ContaPagar cp LEFT JOIN cp.contaDeSaida cs"
@@ -28,11 +31,20 @@ public interface ContaRepository extends JpaRepository<ContaPagar, Long> {
 			+ " AND   (cp.situacaoConta = :#{#pesquisaContaDTO.situacaoConta} OR  :#{#pesquisaContaDTO.situacaoConta} IS NULL)"
 			+ " AND   (cp.contaDeSaida.id = :#{#pesquisaContaDTO.idContaSaida} OR  :#{#pesquisaContaDTO.idContaSaida} IS NULL) "
 			+ " ORDER BY cp.vencimento ")
-	Collection<ListagemDeContaDTO> obterContas(@Param("pesquisaContaDTO") PesquisaContaDTO pesquisaContaDTO);
-	
+	List<ListagemDeContaDTO> obterContas(@Param("pesquisaContaDTO") PesquisaContaDTO pesquisaContaDTO);
+//
+//	@Transactional
+//	@Modifying
+//	@Query(" UPDATE ContaPagar SET situacaoConta = ?1, contaDeSaida.id = ?2, comentarioDePagamento = ?3 where id = ?4 ")
+//	void atualizarContaPagar(SituacaoConta pago, Long idContaSaida, String comentarioDePagamento, Long ContaPagar);
+
 	@Transactional
 	@Modifying
-	@Query(" update ContaPagar set situacaoConta = ?1, contaDeSaida.id = ?2, comentarioDePagamento = ?3 where id = ?4 ")
-	void atualizarContaPagar(SituacaoConta pago, Long idContaSaida, String comentarioDePagamento, Long ContaPagar);
+	@Query(" UPDATE ContaPagar SET situacaoConta = :#{#pago.situacaoConta} ,"
+			+ " contaDeSaida.id = :#{#pago.idContaSaida},"
+			+ " comentarioDePagamento = :#{#pago.comentarioDePagamento},"
+			+ " empresaPagamentoDaConta.id = :#{#pago.idEmpresaPagamento} "
+			+ " WHERE id = :#{#pago.idContaPagar} ")
+	void atualizarContaPagar(@Param(value = "pago") SalvarPagamentoDTO pago);
 
 }

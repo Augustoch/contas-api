@@ -55,4 +55,10 @@ public class ContaPagar {
 
 	@Column(length = 500)
 	private String comentarioDePagamento;
+	
+	@OneToOne
+	private Empresa empresaReponsavelConta;
+	
+	@OneToOne
+	private Empresa empresaPagamentoDaConta;
 }

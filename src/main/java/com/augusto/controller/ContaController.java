@@ -36,13 +36,12 @@ public class ContaController {
 	}
 
 	@DeleteMapping("{idConta}")
-	public void deletarConta(@PathVariable Long idConta) {
-		this.contaPagarBusiness.deletar(idConta);
+	public Long deletarConta(@PathVariable Long idConta) {
+		return this.contaPagarBusiness.deletar(idConta);
 	}
 
 	@PutMapping
-	public void /*ResponseEntity<?>*/ salvarPagamento(SalvarPagamentoDTO salvarPagamentoDTO) throws IOException {
+	public void salvarPagamento(SalvarPagamentoDTO salvarPagamentoDTO) throws IOException {
 		this.contaPagarBusiness.salvarContaPagamento(salvarPagamentoDTO);
-		//return ResponseEntity.ok().build();
 	}
 }
