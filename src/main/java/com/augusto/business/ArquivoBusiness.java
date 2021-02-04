@@ -46,4 +46,8 @@ public class ArquivoBusiness {
 
 	}
 
+	public void atualizar(Long idArquivo, String nomeArquivo, byte[] bytes) {
+		this.arquivoRepository.atualizar(idArquivo, nomeArquivo, bytes);		
+	}
+
 }

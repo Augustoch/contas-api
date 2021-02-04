@@ -13,9 +13,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.augusto.business.ArquivoBusiness;
 
@@ -36,6 +38,11 @@ public class ArquivoController {
 	public byte[] boletoComprovante(@RequestParam Long idBoleto, @RequestParam Long idComprovante) throws IOException {
 		return this.arquivoBusiness.boletoComprovante(idBoleto, idComprovante);
 
+	}
+	
+	@PutMapping
+	public void atualizar(Long idArquivo,  MultipartFile file) throws IOException {
+		this.arquivoBusiness.atualizar(idArquivo, file.getOriginalFilename(), file.getBytes());
 	}
 
 }

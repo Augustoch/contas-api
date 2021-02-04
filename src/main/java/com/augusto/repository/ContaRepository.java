@@ -22,8 +22,11 @@ import com.augusto.model.enums.SituacaoConta;
 public interface ContaRepository extends JpaRepository<ContaPagar, Long> {
 
 	@Query("SELECT new com.augusto.model.dto.ListagemDeContaDTO(cp.id, cp.descricao, cp.vencimento, cp.comentarios,"
-			+ " cp.situacaoConta, cp.comentarioDePagamento, cs.descricao) "
-			+ " FROM ContaPagar cp LEFT JOIN cp.contaDeSaida cs"
+			+ " cp.situacaoConta, cp.comentarioDePagamento, cs.descricao, er.descricao, ep.descricao) "
+			+ " FROM ContaPagar cp "
+			+ "	LEFT JOIN cp.contaDeSaida cs"
+			+ " LEFT JOIN cp.empresaReponsavelConta er"
+			+ "	LEFT JOIN cp.empresaPagamentoDaConta ep"
 			+ " WHERE (cp.id = :#{#pesquisaContaDTO.id} OR :#{#pesquisaContaDTO.id} IS NULL) "
 			+ " AND   (cp.descricao LIKE CONCAT('%', :#{#pesquisaContaDTO.descricao} , '%') OR :#{#pesquisaContaDTO.descricao} IS NULL) "
 			+ " AND   ((cp.vencimento BETWEEN :#{#pesquisaContaDTO.vencInicialDate} AND :#{#pesquisaContaDTO.vencFinalDate}) "
