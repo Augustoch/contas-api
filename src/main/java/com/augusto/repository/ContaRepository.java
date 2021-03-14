@@ -12,36 +12,37 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.augusto.model.ContaPagar;
-import com.augusto.model.dto.ContaDTO;
 import com.augusto.model.dto.ListagemDeContaDTO;
 import com.augusto.model.dto.PesquisaContaDTO;
 import com.augusto.model.dto.SalvarPagamentoDTO;
-import com.augusto.model.enums.SituacaoConta;
 
 @Repository
 public interface ContaRepository extends JpaRepository<ContaPagar, Long> {
 
-	@Query("SELECT new com.augusto.model.dto.ListagemDeContaDTO(cp.id, cp.descricao, cp.vencimento, cp.comentarios,"
-			+ " cp.situacaoConta, cp.comentarioDePagamento, cs.descricao, er.descricao, ep.descricao) "
+	@Query("SELECT NEW com.augusto.model.dto.ListagemDeContaDTO(cp.id, cp.descricao, cp.vencimento, cp.comentarios,"
+			+ " cp.situacaoConta, cp.comentarioDePagamento, cs.descricao, er.descricao, ep.descricao, cp.dataPagamento) "
 			+ " FROM ContaPagar cp "
 			+ "	LEFT JOIN cp.contaDeSaida cs"
 			+ " LEFT JOIN cp.empresaReponsavelConta er"
 			+ "	LEFT JOIN cp.empresaPagamentoDaConta ep"
-			+ " WHERE (cp.id = :#{#pesquisaContaDTO.id} OR :#{#pesquisaContaDTO.id} IS NULL) "
-			+ " AND   (cp.descricao LIKE CONCAT('%', :#{#pesquisaContaDTO.descricao} , '%') OR :#{#pesquisaContaDTO.descricao} IS NULL) "
-			+ " AND   ((cp.vencimento BETWEEN :#{#pesquisaContaDTO.vencInicialDate} AND :#{#pesquisaContaDTO.vencFinalDate}) "
-			+ "		  OR (:#{#pesquisaContaDTO.vencInicial} IS NULL AND :#{#pesquisaContaDTO.vencFinal} IS NULL))"
-			+ " AND   (cp.situacaoConta = :#{#pesquisaContaDTO.situacaoConta} OR  :#{#pesquisaContaDTO.situacaoConta} IS NULL)"
-			+ " AND   (cp.contaDeSaida.id = :#{#pesquisaContaDTO.idContaSaida} OR  :#{#pesquisaContaDTO.idContaSaida} IS NULL) "
+			+ " WHERE (cp.id = :#{#pesquisa.id} OR :#{#pesquisa.id} IS NULL) "
+			+ " AND   (cp.descricao LIKE CONCAT('%', :#{#pesquisa.descricao} , '%') OR :#{#pesquisa.descricao} IS NULL) "
+			+ " AND   (cp.vencimento BETWEEN :#{#pesquisa.vencInicial} AND :#{#pesquisa.vencFinal}) "
+			//+ "		  OR ( :#{#pesquisa.vencInicial} IS NULL AND :#{#pesquisa.vencFinal} IS NULL ))"
+			+ " AND   (cp.dataPagamento BETWEEN :#{#pesquisa.pagInicial} AND :#{#pesquisa.pagFinal}) "
+			//+ "		  OR (DATE(:#{#pesquisa.pagInicial}) IS NULL AND DATE(:#{#pesquisa.pagFinal})  IS NULL))"
+			+ " AND   (cp.situacaoConta = :#{#pesquisa.situacaoConta} OR  :#{#pesquisa.situacaoConta} IS NULL)"
+			+ " AND   (cp.contaDeSaida.id = :#{#pesquisa.idContaSaida} OR  :#{#pesquisa.idContaSaida} IS NULL) "
 			+ " ORDER BY cp.vencimento ")
-	List<ListagemDeContaDTO> obterContas(@Param("pesquisaContaDTO") PesquisaContaDTO pesquisaContaDTO);
+	List<ListagemDeContaDTO> obterContas(@Param("pesquisa") PesquisaContaDTO pesquisa);
 
 	@Transactional
 	@Modifying
 	@Query(" UPDATE ContaPagar SET situacaoConta = :#{#pago.situacaoConta} ,"
 			+ " contaDeSaida.id = :#{#pago.idContaSaida},"
 			+ " comentarioDePagamento = :#{#pago.comentarioDePagamento},"
-			+ " empresaPagamentoDaConta.id = :#{#pago.idEmpresaPagamento} "
+			+ " empresaPagamentoDaConta.id = :#{#pago.idEmpresaPagamento}, "
+			+ " dataPagamento = :#{#pago.dataPagamento} "
 			+ " WHERE id = :#{#pago.idContaPagar} ")
 	void atualizarContaPagar(@Param(value = "pago") SalvarPagamentoDTO pago);
 

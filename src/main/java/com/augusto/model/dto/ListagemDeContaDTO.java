@@ -6,9 +6,11 @@ import java.util.Date;
 
 import com.augusto.model.Arquivo;
 import com.augusto.model.enums.SituacaoConta;
+import com.augusto.util.DateUtil;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,10 +19,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@Builder
 public class ListagemDeContaDTO {
 	private Long idConta;
 	private String descricaoConta;
-	private Date vencimento;
+	private LocalDate vencimento;
+	private LocalDate pagamento;
 	private String comentarios;
 	private SituacaoConta situacaoConta;
 	private String comentarioDePagamento;
@@ -40,10 +44,11 @@ public class ListagemDeContaDTO {
 
 	public ListagemDeContaDTO(Long idConta, String descricaoConta, Date vencimento, String comentarios,
 			SituacaoConta situacaoConta, String comentarioDePagamento, String contaDeSaida, String empresaResponsavel,
-			String empresaPagamento) {
+			String empresaPagamento, Date pagamento) {
 		this.idConta = idConta;
 		this.descricaoConta = descricaoConta;
-		this.vencimento = vencimento;
+		this.vencimento = DateUtil.dateToLocalDate(vencimento);
+		this.pagamento = DateUtil.dateToLocalDate(pagamento);
 		this.comentarios = comentarios;
 		this.situacaoConta = situacaoConta;
 		this.comentarioDePagamento = comentarioDePagamento;
@@ -57,7 +62,7 @@ public class ListagemDeContaDTO {
 
 	private void verificaVencimento() {
 		LocalDate hoje = LocalDate.now();
-		LocalDate vencimentoLocalDate = this.vencimento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate vencimentoLocalDate = this.vencimento;
 
 		this.estaVencida = vencimentoLocalDate.isBefore(hoje);
 		this.venceHoje = vencimentoLocalDate.isEqual(hoje);

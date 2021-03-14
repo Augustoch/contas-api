@@ -2,6 +2,7 @@ package com.augusto.model;
 
 import java.util.Collection;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,12 +13,19 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class Usuario implements UserDetails {
 
 	/**
@@ -27,6 +35,7 @@ public class Usuario implements UserDetails {
 	@Id
 	@GeneratedValue
 	private Long id;
+	@Column(unique = true)
 	private String usuario;
 	private String senha;
 
@@ -72,4 +81,14 @@ public class Usuario implements UserDetails {
 	public UsernamePasswordAuthenticationToken converter() {
 		return new UsernamePasswordAuthenticationToken(this.usuario, this.senha);
 	}
+	
+	public boolean eAdm() {
+		for (Perfil perfil : this.perfis) {
+			if(perfil.getNome().equalsIgnoreCase("ADMINISTRADOR")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

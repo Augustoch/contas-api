@@ -1,5 +1,6 @@
 package com.augusto.model;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 
@@ -11,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -61,4 +64,13 @@ public class ContaPagar {
 	
 	@OneToOne
 	private Empresa empresaPagamentoDaConta;
+	
+	@Column(columnDefinition = "DATE")
+	private Date dataPagamento;
+	
+	@Column(columnDefinition = "DATE")
+	private Date criacao;
+	
+	@OneToOne
+	private Usuario criador;
 }

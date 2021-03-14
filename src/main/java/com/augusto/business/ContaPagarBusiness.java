@@ -4,22 +4,29 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.augusto.model.Arquivo;
 import com.augusto.model.ContaPagar;
+import com.augusto.model.Usuario;
 import com.augusto.model.dto.ListagemDeContaDTO;
 import com.augusto.model.dto.PesquisaContaDTO;
 import com.augusto.model.dto.SalvarPagamentoDTO;
 import com.augusto.model.enums.SituacaoConta;
 import com.augusto.repository.ContaRepository;
+import com.augusto.repository.ContaRepositoryImpl;
+import com.augusto.util.AuthUtil;
 
 @Component
 public class ContaPagarBusiness {
 
 	@Autowired
 	private ContaRepository contaRepository;
+	
+	@Autowired
+	private ContaRepositoryImpl repo;
 	
 
 	@Autowired
@@ -36,10 +43,8 @@ public class ContaPagarBusiness {
 	}
 
 	public Collection<ListagemDeContaDTO> obterContas(PesquisaContaDTO pesquisaContaDTO) {
-		pesquisaContaDTO.descricaoCheckNonNull();
-		pesquisaContaDTO.converterDateStringsToDate();
-		pesquisaContaDTO.converterSituacaoParaEnumSituacao();
-		Collection<ListagemDeContaDTO> contas = this.contaRepository.obterContas(pesquisaContaDTO);
+		//Collection<ListagemDeContaDTO> contas = this.contaRepository.obterContas(pesquisaContaDTO);
+		Collection<ListagemDeContaDTO> contas = this.repo.obterContas(pesquisaContaDTO);
 
 		for (ListagemDeContaDTO listagemDeContaDTO : contas) {
 			for (Arquivo arquivo : this.arquivoBusiness.getArquivos(listagemDeContaDTO.getIdConta())) {
@@ -51,8 +56,11 @@ public class ContaPagarBusiness {
 	}
 
 	public Long deletar(Long idConta) {
-		 this.contaRepository.deleteById(idConta);
-		 return idConta;
+		if(!AuthUtil.obterUsuario().eAdm()) {
+			throw new RuntimeException("Sem permissão para exclusão");
+		}
+		this.contaRepository.deleteById(idConta);	
+		return idConta;
 
 	}
 

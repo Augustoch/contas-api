@@ -17,6 +17,7 @@ public class Perfil implements GrantedAuthority {
 	@Id @GeneratedValue
 	private Long id;
 	private String nome;
+	private String rota;
 	
 	@Override
 	public String getAuthority() {

@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class LoginModel {
 	private String usuario;
-	  private String senha;
+	private String senha;
 }

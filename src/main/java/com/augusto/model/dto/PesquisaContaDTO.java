@@ -1,67 +1,63 @@
 package com.augusto.model.dto;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Convert;
 import com.augusto.model.enums.SituacaoConta;
+import com.augusto.util.DateUtil;
+import com.augusto.util.converters.LocalDateToDateConverter;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class PesquisaContaDTO {
 	private Long id;
-	private String descricao;
-	private String vencInicial;
-	private String vencFinal;
-	private String situacao;
-	private Long idContaSaida;
-	
-	private Date vencInicialDate;
-	private Date vencFinalDate;
-	
+	private String descricao = "";
+	private Date vencInicial;
+	private Date vencFinal;
+	private Date pagInicial;
+	private Date pagFinal;
 	private SituacaoConta situacaoConta;
-	
-	
-	private Date obterVencInicialAsDate() throws ParseException {
-		if(Objects.nonNull(vencInicial)) {
-			return new SimpleDateFormat("yyyy-MM-dd").parse(vencInicial);			
+	private Long idContaSaida;
+
+//	public PesquisaContaDTO() throws ParseException {
+//		this.setVencFinal(null);
+//		this.setVencFinal(null);
+//	}
+//
+	public void setVencInicial(String date) throws ParseException  {
+		
+		this.vencInicial = DateUtil.parseDate(date);
+		
+	}
+////
+	public void setVencFinal(String date) throws ParseException {
+		this.vencFinal = DateUtil.parseDate(date);
+	}
+//	public void setPagInicial(String date) throws ParseException {
+//		this.pagInicial = LocalDate.parse(date);
+//	}
+//	
+//	public void setPagFinal(String date) throws ParseException {
+//		this.pagFinal = LocalDate.parse(date);
+//	}
+//	
+	public void setSituacaoConta(String situacao) {
+		if (Objects.nonNull(situacao)) {
+			this.situacaoConta = SituacaoConta.valueOf(situacao);
 		}
-		return null;
-	}
-	private Date obterVencFInalAsDate() throws ParseException {
-		if(Objects.nonNull(vencFinal)) {
-			return new SimpleDateFormat("yyyy-MM-dd").parse(vencFinal);
-		}
-		return null;
 	}
 	
-	public void converterDateStringsToDate() {
-				
-		try {
-			this.vencInicialDate = this.obterVencInicialAsDate();
-			this.vencFinalDate = this.obterVencFInalAsDate();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+	public boolean temDataPagamento(){
+		return Objects.nonNull(pagInicial) && Objects.nonNull(pagFinal);
 	}
-	
-	public void converterSituacaoParaEnumSituacao() {
-		if(Objects.nonNull(situacao)) {
-			this.situacaoConta = SituacaoConta.valueOf(situacao);			
-		}
-	}
-	public void descricaoCheckNonNull() {
-		if(Objects.isNull(descricao)) {
-			this.descricao = "";
-		}		
-	}
-	
-	
-	
+
 }

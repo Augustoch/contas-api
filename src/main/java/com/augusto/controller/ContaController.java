@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,12 @@ public class ContaController {
 
 	@PostMapping
 	public void salvarConta(ContaDTO contaDTO) throws Exception {
-		this.contaPagarBusiness.salvarConta(contaDTO.contaBoletoBuild());
+		try {
+			this.contaPagarBusiness.salvarConta(contaDTO.contaBoletoBuild());
+
+		} catch (DataIntegrityViolationException e) {
+			throw new RuntimeException("Já existe um arquivo com esse mesmo nome");
+		}
 	}
 
 	@GetMapping
@@ -42,6 +48,11 @@ public class ContaController {
 
 	@PutMapping
 	public void salvarPagamento(SalvarPagamentoDTO salvarPagamentoDTO) throws IOException {
-		this.contaPagarBusiness.salvarContaPagamento(salvarPagamentoDTO);
+		try {
+			this.contaPagarBusiness.salvarContaPagamento(salvarPagamentoDTO);
+
+		} catch (DataIntegrityViolationException e) {
+			throw new RuntimeException("Já existe um arquivo com esse mesmo nome");
+		}
 	}
 }
